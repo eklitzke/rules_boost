@@ -1,3 +1,4 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
 load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 load("@bazel_skylib//lib:selects.bzl", "selects")
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_library", "boost_so_library", "hdr_list")
@@ -1672,16 +1673,16 @@ boost_library(
 boost_library(
     name = "spirit",
     deps = [
-        ":variant",
+        ":foreach",
+        ":function",
+        ":iostreams",
         ":optional",
         ":phoenix",
-        ":function",
-        ":foreach",
-        ":iostreams",
         ":range",
         ":ref",
         ":tti",
         ":utility",
+        ":variant",
     ],
 )
 
@@ -1814,6 +1815,15 @@ boost_library(
         ],
         ":windows_x86_64": [],
     }),
+    linkopts = select({
+        ":linux": [
+            "-lpthread",
+        ],
+        ":osx_x86_64": [
+            "-lpthread",
+        ],
+        ":windows_x86_64": [],
+    }),
     local_defines = select({
         ":linux_arm": [],
         ":linux_ppc": [],
@@ -1826,15 +1836,6 @@ boost_library(
             "BOOST_WIN32_THREAD",
         ],
         "//conditions:default": [],
-    }),
-    linkopts = select({
-        ":linux": [
-            "-lpthread",
-        ],
-        ":osx_x86_64": [
-            "-lpthread",
-        ],
-        ":windows_x86_64": [],
     }),
     deps = [
         ":algorithm",
@@ -2141,8 +2142,8 @@ boost_library(
 boost_library(
     name = "phoenix",
     deps = [
-        ":proto",
         ":bind",
+        ":proto",
     ],
 )
 
@@ -2194,10 +2195,10 @@ cc_library(
     srcs = ["libs/log/src/dump_ssse3.cpp"] + hdr_list("log"),
     hdrs = [],
     copts = ["-msse4.2"],
-    local_defines = BOOST_LOG_DEFINES,
     includes = [],
     licenses = ["notice"],
     linkopts = [],
+    local_defines = BOOST_LOG_DEFINES,
     visibility = ["//visibility:public"],
     deps = BOOST_LOG_DEPS,
 )
@@ -2211,11 +2212,11 @@ boost_library(
     copts = BOOST_LOG_CFLAGS + [
         "-Iexternal/boost/libs/log/src/",
     ],
-    local_defines = BOOST_LOG_DEFINES,
     exclude_src = [
         "libs/log/src/dump_avx2.cpp",
         "libs/log/src/dump_ssse3.cpp",
     ],
+    local_defines = BOOST_LOG_DEFINES,
     deps = BOOST_LOG_DEPS + BOOST_LOG_SSSE3_DEP,
 )
 

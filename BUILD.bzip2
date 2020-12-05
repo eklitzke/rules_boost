@@ -1,6 +1,8 @@
 # Description:
 #   bzip2 is a high-quality data compressor.
 
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
 licenses(["notice"])  # BSD derivative
 
 cc_library(

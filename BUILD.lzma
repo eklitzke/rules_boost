@@ -2,6 +2,7 @@
 #    lzma is a general purpose data compression library https://tukaani.org/xz/
 #    Public Domain
 
+load("@rules_cc//cc:defs.bzl", "cc_library")
 load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 
 config_setting(
@@ -26,7 +27,7 @@ copy_file(
         ":osx": "@com_github_nelhage_rules_boost//:config.lzma-osx.h",
         ":windows": "@com_github_nelhage_rules_boost//:config.lzma-windows.h",
     }),
-    out = "src/liblzma/api/config.h", # minimize the number of exported include paths
+    out = "src/liblzma/api/config.h",  # minimize the number of exported include paths
 )
 
 cc_library(

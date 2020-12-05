@@ -1,3 +1,4 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_import", "cc_library")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 hdrs_patterns = [
@@ -80,7 +81,7 @@ def boost_library(
     if linkopts == None:
         linkopts = []
 
-    return native.cc_library(
+    return cc_library(
         name = name,
         visibility = visibility,
         defines = default_defines + defines,
@@ -115,7 +116,7 @@ def boost_so_library(
         boost_name = name
 
     for suffix in ["so", "dll", "dylib"]:
-        native.cc_binary(
+        cc_binary(
             name = "lib_internal_%s.%s" % (name, suffix),
             visibility = ["//visibility:private"],
             srcs = hdr_list(boost_name, exclude_hdr) + srcs_list(boost_name, exclude_src) + srcs,
@@ -131,17 +132,17 @@ def boost_so_library(
         output_group = "interface_library",
         visibility = ["//visibility:private"],
     )
-    native.cc_import(
+    cc_import(
         name = "_imported_%s.so" % name,
         shared_library = ":lib_internal_%s.so" % name,
         visibility = ["//visibility:private"],
     )
-    native.cc_import(
+    cc_import(
         name = "_imported_%s.dylib" % name,
         shared_library = ":lib_internal_%s.dylib" % name,
         visibility = ["//visibility:private"],
     )
-    native.cc_import(
+    cc_import(
         name = "_imported_%s.dll" % name,
         shared_library = ":lib_internal_%s.dll" % name,
         interface_library = ":%s_dll_interface_file" % name,
